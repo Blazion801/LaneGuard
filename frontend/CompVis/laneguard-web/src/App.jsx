@@ -56,7 +56,7 @@ export default function App() {
       // Ambil foto tiap 150ms untuk dikirim ke Backend
       loopRef.current = setInterval(() => {
         sendFrameToBackend();
-      }, 150);
+      }, 80);
     };
 
     ws.onmessage = (event) => {
@@ -91,7 +91,7 @@ export default function App() {
     const context = canvas.getContext('2d');
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const fullBase64 = canvas.toDataURL('image/jpeg', 0.5); 
+    const fullBase64 = canvas.toDataURL('image/jpeg', 0.4); 
     const base64Data = fullBase64.split(',')[1]; 
 
     wsRef.current.send(JSON.stringify({ image: base64Data }));
