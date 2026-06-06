@@ -45,7 +45,7 @@ export default function App() {
     setupCamera();
 
     // 2. Setup WebSocket (GANTI URL INI NANTI SAAT DEPLOY KE RAILWAY)
-    const wsUrl = "ws://localhost:8000/ws/stream"; 
+    const wsUrl = "wss://laneguard-production.up.railway.app/ws/stream"; 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
