@@ -53,7 +53,7 @@ async def websocket_stream(websocket: WebSocket):
 
             # 5. Compress gambar hasil proses dan ubah kembali jadi Base64
             # PENTING: Kualitas diturunkan ke 60% agar pengiriman balik ke HP sangat cepat (Low Latency)
-            _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 60])
+            _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 40])
             out_b64 = base64.b64encode(buffer).decode('utf-8')
 
             # 6. Kirim balik gambar dan telemetry ke HP
