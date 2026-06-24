@@ -152,13 +152,16 @@ export default function App() {
           <div className="hidden">
             <video 
               ref={videoRef} 
-              src="/test_video.mp4"
+              src="/test_video.mp4" 
               autoPlay 
               loop 
-              muted 
-              playsInline 
-              width="640" 
-              height="360" 
+              muted          
+              playsInline    
+              onLoadedMetadata={() => {
+                console.log("Video metadata loaded, starting playback...");
+                videoRef.current.play();
+              }}
+              crossOrigin="anonymous" 
             />
             <canvas ref={canvasRef} width="640" height="360" />
           </div>
