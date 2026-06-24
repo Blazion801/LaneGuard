@@ -28,10 +28,7 @@ export default function App() {
   const isWarning = telemetry.alert === 'DEPARTURE' || Math.abs(telemetry.offset) > 0.5;
 
   useEffect(() => {
-    // 1. Matikan setupCamera karena kita akan pakai file video
-    // (Kode getUserMedia dihapus)
-
-    // 2. Setup WebSocket 
+    // Setup WebSocket 
     const wsUrl = "wss://laneguard-production.up.railway.app/ws/stream"; 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -155,7 +152,7 @@ export default function App() {
           <div className="hidden">
             <video 
               ref={videoRef} 
-              src="/jalan.mp4" /* Pastikan jalan.mp4 ada di folder public */
+              src="/test-video.mp4"
               autoPlay 
               loop 
               muted 
