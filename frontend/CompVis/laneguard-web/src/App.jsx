@@ -18,7 +18,7 @@ export default function App() {
   const [processedImage, setProcessedImage] = useState(null);
   const [telemetry, setTelemetry] = useState({ offset: 0, curvature: 0, fps: 0, alert: "OK" });
 
-  // --- REFS UNTUK KAMERA & WEBSOCKET ---
+  // --- REFS UNTUK VIDEO LOKAL & WEBSOCKET ---
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const wsRef = useRef(null);
@@ -28,23 +28,10 @@ export default function App() {
   const isWarning = telemetry.alert === 'DEPARTURE' || Math.abs(telemetry.offset) > 0.5;
 
   useEffect(() => {
-    // 1. Setup Kamera HP
-    const setupCamera = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: 640, height: 360 } 
-        });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error("Gagal akses kamera:", err);
-        alert("Mohon izinkan akses kamera di browser HP Anda!");
-      }
-    };
-    setupCamera();
+    // 1. Matikan setupCamera karena kita akan pakai file video
+    // (Kode getUserMedia dihapus)
 
-    // 2. Setup WebSocket (GANTI URL INI NANTI SAAT DEPLOY KE RAILWAY)
+    // 2. Setup WebSocket 
     const wsUrl = "wss://laneguard-production.up.railway.app/ws/stream"; 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -53,7 +40,7 @@ export default function App() {
       console.log("✅ WebSocket Terhubung!");
       setIsConnected(true);
       
-      // Ambil foto tiap 150ms untuk dikirim ke Backend
+      // Ambil foto dari video MP4 tiap 80ms untuk dikirim ke Backend
       loopRef.current = setInterval(() => {
         sendFrameToBackend();
       }, 80);
@@ -85,11 +72,15 @@ export default function App() {
   const sendFrameToBackend = () => {
     if (!videoRef.current || !canvasRef.current || !wsRef.current) return;
     if (wsRef.current.readyState !== WebSocket.OPEN) return;
+    
+    // PENTING: Jangan kirim kalau videonya sedang pause atau berhenti
+    if (videoRef.current.paused || videoRef.current.ended) return;
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
 
+    // Salin frame dari VIDEO MP4 ke canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const fullBase64 = canvas.toDataURL('image/jpeg', 0.4); 
     const base64Data = fullBase64.split(',')[1]; 
@@ -160,9 +151,18 @@ export default function App() {
             </div>
           )}
 
-          {/* ELEMEN TERSEMBUNYI UNTUK CAPTURE KAMERA HP */}
+          {/* PERUBAHAN UTAMA: ELEMEN TERSEMBUNYI UNTUK MEMUTAR VIDEO LOKAL */}
           <div className="hidden">
-            <video ref={videoRef} autoPlay playsInline muted width="640" height="360" />
+            <video 
+              ref={videoRef} 
+              src="/jalan.mp4" /* Pastikan jalan.mp4 ada di folder public */
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              width="640" 
+              height="360" 
+            />
             <canvas ref={canvasRef} width="640" height="360" />
           </div>
 
