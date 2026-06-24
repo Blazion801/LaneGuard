@@ -152,7 +152,7 @@ export default function App() {
           <div className="hidden">
             <video 
               ref={videoRef} 
-              src="/test-video.mp4"
+              src="/test_video.mp4"
               autoPlay 
               loop 
               muted 
